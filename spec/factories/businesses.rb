@@ -1,3 +1,5 @@
+require 'faker'
+
 FactoryGirl.define do
   factory :business do
     sequence(:id) { |n| 5000 + n }

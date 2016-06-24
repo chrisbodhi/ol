@@ -134,6 +134,7 @@ GEM
     thread_safe (0.3.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
+    will_paginate (3.0.7)
 
 PLATFORMS
   ruby
@@ -148,6 +149,7 @@ DEPENDENCIES
   rspec-rails (~> 3.4)
   spring
   sqlite3
+  will_paginate (~> 3.0.5)
 
 BUNDLED WITH
    1.12.5
