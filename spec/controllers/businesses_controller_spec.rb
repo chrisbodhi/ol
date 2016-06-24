@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'will_paginate'
 
 describe BusinessesController do
   describe 'GET #index' do

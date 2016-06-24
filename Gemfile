@@ -1,10 +1,9 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.2.6'
-
 gem 'rails-api'
-
 gem 'sqlite3'
+gem 'will_paginate', '~> 3.0.5'
 
 gem 'spring', :group => :development
 
