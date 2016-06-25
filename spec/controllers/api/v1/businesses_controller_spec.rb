@@ -15,6 +15,14 @@ describe Api::V1::BusinessesController do
 
       expect(JSON.parse(response.body).length).to be <= 50
     end
+
+    it 'returns an empty array for pages requested outside the range of available data' do
+      create(:business)
+      pageId = 2
+      get :index, format: :json, page: pageId
+
+      expect(JSON.parse(response.body)).to eq []
+    end
   end
 
   describe 'GET #show for API' do
@@ -34,6 +42,20 @@ describe Api::V1::BusinessesController do
       expect(json['uuid']).to eq business.uuid
       expect(json['name']).to eq business.name
       expect(json['website']).to eq business.website
+    end
+
+    it 'returns JSON for IDs that do not exist' do
+      get :show, id: 111111
+
+      expect(response.headers['Content-Type']).to match 'application/json'
+    end
+
+    it 'states that there is no entry in the database for IDs that do not exist' do
+      id = 111111
+      get :show, id: id
+
+      expect(response.status).to be 404
+      expect(JSON.parse(response.body)['error']).to include id.to_s
     end
   end
 end
