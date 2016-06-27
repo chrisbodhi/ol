@@ -17,5 +17,5 @@
 /tmp
 
 # Local files
-data.csv
+*.csv
 brief.pdf
