@@ -22,4 +22,4 @@ csv.each do |row|
   puts "#{t.name} saved"
 end
 
-puts "There are now #{Business.count} rows in the businesses table"
+puts "There are now #{Business.count} rows in the #{Rails.env} businesses table!"
