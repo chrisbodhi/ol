@@ -2,7 +2,7 @@ require 'csv'
 
 csv_text = File.read(Rails.root.join('data.csv'))
 
-csv = CSV.parse(csv_text, :headers => true, :encoding => 'ISO-8859-1')
+csv = CSV.parse(csv_text, :headers => true)
 
 csv.each do |row|
   t = Business.new
@@ -22,4 +22,4 @@ csv.each do |row|
   puts "#{t.name} saved"
 end
 
-puts "There are now #{Business.count} rows in the businesses table"
+puts "There are now #{Business.count} rows in the #{Rails.env} businesses table!"
