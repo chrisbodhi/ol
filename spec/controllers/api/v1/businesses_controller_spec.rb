@@ -13,15 +13,24 @@ describe Api::V1::BusinessesController do
       51.times{ create(:business) }
       get :index, format: :json
 
-      expect(JSON.parse(response.body).length).to be <= 50
+      expect(JSON.parse(response.body)['businesses'].length).to be <= 50
     end
 
     it 'returns an empty array for pages requested outside the range of available data' do
       create(:business)
       pageId = 2
       get :index, format: :json, page: pageId
+      expect(JSON.parse(response.body)['businesses']).to eq []
+    end
 
-      expect(JSON.parse(response.body)).to eq []
+    it 'returns metadata about the current page, total entries, and amount per page' do
+      51.times{ create(:business) }
+      get :index, format: :json
+      json = JSON.parse(response.body)
+
+      expect(json['current_page']).to eq 1
+      expect(json['per_page']).to eq 50
+      expect(json['total_entries']).to eq 51
     end
   end
 
@@ -55,7 +64,7 @@ describe Api::V1::BusinessesController do
       get :show, id: id
 
       expect(response.status).to be 404
-      expect(JSON.parse(response.body)['error']).to include id.to_s
+      expect(JSON.parse(response.body)['detail']).to include id.to_s
     end
   end
 end

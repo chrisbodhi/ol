@@ -1,12 +1,16 @@
-require 'json'
-
 module Api
   module V1
     class BusinessesController < ApplicationController
       def index
         @businesses = Business.paginate(:page => params[:page], :per_page => 50)
+        @withMeta = {
+          :current_page => @businesses.current_page,
+          :per_page => @businesses.per_page,
+          :total_entries => @businesses.total_entries,
+          :businesses => @businesses
+        }
 
-        render_it(@businesses, params[:pretty])
+        render_it(@withMeta, params[:pretty])
       end
 
       def show
