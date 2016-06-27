@@ -2,7 +2,10 @@ module Api
   module V1
     class BusinessesController < ApplicationController
       def index
-        @businesses = Business.paginate(:page => params[:page], :per_page => 50)
+        @businesses = Business.paginate(
+          :page => params[:page],
+          :per_page => set_per_page()
+        )
         @withMeta = {
           :current_page => @businesses.current_page,
           :per_page => @businesses.per_page,
@@ -30,6 +33,16 @@ module Api
         else
           render json: obj
         end
+      end
+
+      def set_per_page()
+        per_page = 50
+        if (params[:per_page] && params[:per_page] > 100)
+          per_page = 100
+        elsif params[:per_page]
+          per_page = params[:per_page]
+        end
+        return per_page
       end
     end
   end

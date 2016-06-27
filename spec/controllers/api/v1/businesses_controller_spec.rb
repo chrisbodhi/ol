@@ -9,11 +9,32 @@ describe Api::V1::BusinessesController do
       expect(response.headers['Content-Type']).to match 'application/json'
     end
 
-    it 'returns a maximum of fifty entries per page' do
+    it 'returns fifty entries per page by default' do
       51.times{ create(:business) }
       get :index, format: :json
 
-      expect(JSON.parse(response.body)['businesses'].length).to be <= 50
+      expect(JSON.parse(response.body)['businesses'].length).to eq 50
+    end
+
+    it 'can return a user-specified number of entries per page' do
+      51.times{ create(:business) }
+      perPage = 20
+      get :index, format: :json, per_page: perPage
+      json = JSON.parse(response.body)
+
+      expect(json['businesses'].length).to eq perPage
+      expect(json['per_page']).to eq perPage
+    end
+
+    it 'can return up to 100 entries per page' do
+      101.times{ create(:business) }
+      perPage = 150
+      max = 100
+      get :index, format: :json, per_page: perPage
+      json = JSON.parse(response.body)
+
+      expect(json['businesses'].length).to eq max
+      expect(json['per_page']).to eq max
     end
 
     it 'returns an empty array for pages requested outside the range of available data' do
