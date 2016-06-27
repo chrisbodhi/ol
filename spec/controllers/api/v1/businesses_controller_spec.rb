@@ -44,7 +44,7 @@ describe Api::V1::BusinessesController do
       expect(JSON.parse(response.body)['businesses']).to eq []
     end
 
-    it 'returns metadata about the current page, total entries, and amount per page' do
+    it 'returns metadata about the current page, total entries, links, and amount per page' do
       51.times{ create(:business) }
       get :index, format: :json
       json = JSON.parse(response.body)
@@ -52,6 +52,19 @@ describe Api::V1::BusinessesController do
       expect(json['current_page']).to eq 1
       expect(json['per_page']).to eq 50
       expect(json['total_entries']).to eq 51
+    end
+
+    it 'returns metadata about the links per page' do
+      get :index, format: :json
+      json = JSON.parse(response.body)
+
+      expect(json['links'].keys).to eq ['self', 'first', 'last']
+    end
+
+    it 'contains Link information in the headers' do
+      get :index, format: :json
+
+      expect(response.headers['Link']).to include "api/businesses?page=1>; rel='first'"
     end
   end
 
