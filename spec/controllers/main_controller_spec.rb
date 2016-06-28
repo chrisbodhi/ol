@@ -21,5 +21,4 @@ RSpec.describe MainController, type: :controller do
       expect(JSON.parse(response.body).length).to be 1
     end
   end
-
 end

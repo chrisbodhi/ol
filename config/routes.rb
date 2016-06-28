@@ -8,4 +8,6 @@ Rails.application.routes.draw do
       resources :businesses, only: [:index, :show]
     end
   end
+
+  get '*not_found', to: 'errors#render_404'
 end
