@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 desc "Sets up all of the things for the API: get data, prep & seed db's, delete files, and runs rspec once."
 task :setup do
   unless File.exist? 'data.csv'
