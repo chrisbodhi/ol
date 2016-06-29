@@ -28,7 +28,7 @@ describe Api::V1::BusinessesController do
 
     it 'can return up to 100 entries per page' do
       101.times{ create(:business) }
-      perPage = 150
+      perPage = '150'
       max = 100
       get :index, format: :json, per_page: perPage
       json = JSON.parse(response.body)
@@ -37,9 +37,19 @@ describe Api::V1::BusinessesController do
       expect(json['per_page']).to eq max
     end
 
+    it 'returns the default amount per page if prompted for zero items per page' do
+      51.times{ create(:business) }
+      perPage = '0'
+      default = 50
+      get :index, format: :json, per_page: perPage
+      json = JSON.parse(response.body)
+
+      expect(json['businesses'].length).to eq default
+    end
+
     it 'returns an empty array for pages requested outside the range of available data' do
       create(:business)
-      pageId = 2
+      pageId = '2'
       get :index, format: :json, page: pageId
       expect(JSON.parse(response.body)['businesses']).to eq []
     end
