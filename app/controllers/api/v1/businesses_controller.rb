@@ -8,9 +8,9 @@ module Api
         )
 
         @links = {
-          self: "http://#{request.server_name}:#{request.port}/api/businesses/?page=#{@businesses.current_page}",
+          self: "http://#{request.server_name}:#{request.port}/api/businesses?page=#{@businesses.current_page}",
           first: "http://#{request.server_name}:#{request.port}/api/businesses?page=1",
-          last: "http://#{request.server_name}:#{request.port}/api/businesses/?page=#{@businesses.total_pages}"
+          last: "http://#{request.server_name}:#{request.port}/api/businesses?page=#{@businesses.total_pages}"
         }
 
         # Add pagination details in the headers so as to provide options to API consumers
@@ -62,16 +62,17 @@ module Api
 
       # Update the response header and metadata object in one pass
       def add_links
-        response.headers['Link'] = "<http://#{request.server_name}:#{request.port}/api/businesses?page=1>; rel='first', <http://#{request.server_name}:#{request.port}/api/businesses/?page=#{@businesses.total_pages}>; rel='last'"
+        link_root = "<http://#{request.server_name}:#{request.port}/api/businesses?page="
+        response.headers['Link'] = "#{link_root}1>; rel='first', #{link_root}#{@businesses.total_pages}>; rel='last'"
 
         if @businesses.next_page
-          response.headers['Link'] << ", <http://#{request.server_name}:#{request.port}/api/businesses/?page=#{@businesses.next_page}>; rel='next'"
-          @links['next'] = "http://#{request.server_name}:#{request.port}/api/businesses/?page=#{@businesses.next_page}"
+          response.headers['Link'] << ", #{link_root}#{@businesses.next_page}>; rel='next'"
+          @links['next'] = "#{link_root}#{@businesses.next_page}"
         end
 
         if @businesses.previous_page
-          response.headers['Link'] << ", <http://#{request.server_name}:#{request.port}/api/businesses/?page=#{@businesses.previous_page}>; rel='prev'"
-          @links['prev'] = "http://#{request.server_name}:#{request.port}/api/businesses/?page=#{@businesses.previous_page}"
+          response.headers['Link'] << ", <#{link_root}#{@businesses.previous_page}>; rel='prev'"
+          @links['prev'] = "#{link_root}#{@businesses.previous_page}"
         end
       end
     end
