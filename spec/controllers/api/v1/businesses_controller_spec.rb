@@ -21,8 +21,12 @@ describe Api::V1::BusinessesController do
       expect(response.status).to be 403
     end
 
-    xit 'returns a JSON-formatted error message for 4xx errors' do
-      # todo
+    it 'returns a JSON-formatted error message for 4xx errors' do
+      request.headers['TOKEN'] = 'wrong'
+      get :index, format: :json
+
+      expect(response.headers['Content-Type']).to match 'application/json'
+      expect(JSON.parse(response.body)['error'].length).to be > 0
     end
 
     it 'returns JSON-formatted content' do

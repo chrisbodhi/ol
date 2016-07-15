@@ -39,23 +39,33 @@ module Api
 
       def check_token
         unless request.headers['TOKEN']
-          head :unauthorized
+          render_it(
+            {status: :unauthorized, message: 'Unauthorized'},
+            nil,
+            true
+          )
           return
         end
 
         if request.headers['TOKEN'] != 'right'
-          head :forbidden
-          return
+          render_it(
+            {status: :forbidden, message: 'Forbidden'},
+            nil,
+            true
+          )
         end
+        return
       end
 
       def pretty_json(obj)
         JSON.pretty_generate(JSON.parse(obj.to_json))
       end
 
-      def render_it(obj, check)
+      def render_it(obj, check, err=false)
         if check
           render json: pretty_json(obj)
+        elsif err
+          render status: obj[:status], json: {error: "#{obj[:message]}"}
         else
           render json: obj
         end
