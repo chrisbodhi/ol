@@ -1,6 +1,8 @@
 module Api
   module V1
     class BusinessesController < ApplicationController
+      before_filter :check_token
+
       def index
         @businesses = Business.paginate(
           :page => params[:page],
@@ -34,6 +36,20 @@ module Api
       end
 
       private
+
+      def check_token
+        unless request.headers['TOKEN']
+          head :unauthorized
+          return
+        end
+
+        if request.headers['TOKEN'] != 'right'
+          head :forbidden
+          return
+        end
+
+        # continue
+      end
 
       def pretty_json(obj)
         JSON.pretty_generate(JSON.parse(obj.to_json))
