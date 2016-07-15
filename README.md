@@ -22,6 +22,8 @@ _offering endpoints to access both whole pages of business data and data on indi
 ##Usage :fax:
 - Start the server on port 3000 by running `bin/rails server` in the project root.
   - Try out the production version by setting the environment variable with `RAILS_ENV=production`, like so: `RAILS_ENV=production bin/rails s`
+- Pass in the access token, `right` into your Authentication headers before making requests to the API
+  - For example, `curl -H "Authorization: token right" "http://localhost:3000/api/businesses?pretty=plz"`
 - The server exposes endpoints for accessing pages of business data and data on an individual business.
   - Access the first 50 results by visiting [http://localhost:3000/api/businesses](http://localhost:3000/api/businesses).
   - Each page of results will, by default, return 50 JSON objects, in ascending order.

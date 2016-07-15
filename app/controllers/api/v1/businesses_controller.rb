@@ -38,7 +38,7 @@ module Api
       private
 
       def check_token
-        unless request.headers['TOKEN']
+        unless request.headers['HTTP_AUTHORIZATION']
           render_it(
             {status: :unauthorized, message: 'Unauthorized'},
             nil,
@@ -47,14 +47,20 @@ module Api
           return
         end
 
-        if request.headers['TOKEN'] != 'right'
+        if check_auth_header != 'right'
           render_it(
             {status: :forbidden, message: 'Forbidden'},
             nil,
             true
           )
+          return
         end
-        return
+      end
+
+      def check_auth_header
+        request
+          .headers['HTTP_AUTHORIZATION']
+          .match(/\s(?<token>\w+)/)['token']
       end
 
       def pretty_json(obj)
