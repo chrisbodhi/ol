@@ -1,6 +1,8 @@
 module Api
   module V1
     class BusinessesController < ApplicationController
+      before_filter :check_token
+
       def index
         @businesses = Business.paginate(
           :page => params[:page],
@@ -35,13 +37,41 @@ module Api
 
       private
 
+      def check_token
+        unless request.headers['HTTP_AUTHORIZATION']
+          render_it(
+            {status: :unauthorized, message: 'Unauthorized'},
+            nil,
+            true
+          )
+          return
+        end
+
+        if check_auth_header != 'right'
+          render_it(
+            {status: :forbidden, message: 'Forbidden'},
+            nil,
+            true
+          )
+          return
+        end
+      end
+
+      def check_auth_header
+        request
+          .headers['HTTP_AUTHORIZATION']
+          .match(/\s(?<token>\w+)/)['token']
+      end
+
       def pretty_json(obj)
         JSON.pretty_generate(JSON.parse(obj.to_json))
       end
 
-      def render_it(obj, check)
+      def render_it(obj, check, err=false)
         if check
           render json: pretty_json(obj)
+        elsif err
+          render status: obj[:status], json: {error: "#{obj[:message]}"}
         else
           render json: obj
         end

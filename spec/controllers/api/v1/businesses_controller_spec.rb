@@ -2,7 +2,33 @@ require 'rails_helper'
 require 'will_paginate'
 
 describe Api::V1::BusinessesController do
+  before :each do
+    request.headers['Authorization'] = 'Token right'
+  end
+
   describe 'GET #index for API' do
+    it 'returns a 401 UNAUTHORIZED response code with no token' do
+      request.headers['Authorization'] = nil
+      get :index, format: :json
+
+      expect(response.status).to be 401
+    end
+
+    it 'returns a 403 FORBIDDEN response code with the wrong token' do
+      request.headers['Authorization'] = 'Token wrong'
+      get :index, format: :json
+
+      expect(response.status).to be 403
+    end
+
+    it 'returns a JSON-formatted error message for 4xx errors' do
+      request.headers['Authorization'] = 'Token wrong'
+      get :index, format: :json
+
+      expect(response.headers['Content-Type']).to match 'application/json'
+      expect(JSON.parse(response.body)['error'].length).to be > 0
+    end
+
     it 'returns JSON-formatted content' do
       get :index, format: :json
 
