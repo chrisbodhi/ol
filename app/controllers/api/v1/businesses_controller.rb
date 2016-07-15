@@ -47,8 +47,6 @@ module Api
           head :forbidden
           return
         end
-
-        # continue
       end
 
       def pretty_json(obj)

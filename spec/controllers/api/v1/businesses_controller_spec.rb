@@ -2,8 +2,13 @@ require 'rails_helper'
 require 'will_paginate'
 
 describe Api::V1::BusinessesController do
+  before :each do
+    request.headers['TOKEN'] = 'right'
+  end
+
   describe 'GET #index for API' do
     it 'returns a 401 UNAUTHORIZED response code with no token' do
+      request.headers['TOKEN'] = nil
       get :index, format: :json
 
       expect(response.status).to be 401
@@ -21,20 +26,19 @@ describe Api::V1::BusinessesController do
     end
 
     it 'returns JSON-formatted content' do
-      request.headers['TOKEN'] = 'wrong'
       get :index, format: :json
 
       expect(response.headers['Content-Type']).to match 'application/json'
     end
 
-    xit 'returns fifty entries per page by default' do
+    it 'returns fifty entries per page by default' do
       51.times{ create(:business) }
       get :index, format: :json
 
       expect(JSON.parse(response.body)['businesses'].length).to eq 50
     end
 
-    xit 'can return a user-specified number of entries per page' do
+    it 'can return a user-specified number of entries per page' do
       51.times{ create(:business) }
       perPage = 20
       get :index, format: :json, per_page: perPage
@@ -44,7 +48,7 @@ describe Api::V1::BusinessesController do
       expect(json['per_page']).to eq perPage
     end
 
-    xit 'can return up to 100 entries per page' do
+    it 'can return up to 100 entries per page' do
       101.times{ create(:business) }
       perPage = '150'
       max = 100
@@ -55,7 +59,7 @@ describe Api::V1::BusinessesController do
       expect(json['per_page']).to eq max
     end
 
-    xit 'returns the default amount per page if prompted for zero items per page' do
+    it 'returns the default amount per page if prompted for zero items per page' do
       51.times{ create(:business) }
       perPage = '0'
       default = 50
@@ -65,14 +69,14 @@ describe Api::V1::BusinessesController do
       expect(json['businesses'].length).to eq default
     end
 
-    xit 'returns an empty array for pages requested outside the range of available data' do
+    it 'returns an empty array for pages requested outside the range of available data' do
       create(:business)
       pageId = '2'
       get :index, format: :json, page: pageId
       expect(JSON.parse(response.body)['businesses']).to eq []
     end
 
-    xit 'returns metadata about the current page, total entries, links, and amount per page' do
+    it 'returns metadata about the current page, total entries, links, and amount per page' do
       51.times{ create(:business) }
       get :index, format: :json
       json = JSON.parse(response.body)
@@ -82,21 +86,21 @@ describe Api::V1::BusinessesController do
       expect(json['total_entries']).to eq 51
     end
 
-    xit 'returns metadata about the links per page' do
+    it 'returns metadata about the links per page' do
       get :index, format: :json
       json = JSON.parse(response.body)
 
       expect(json['links'].keys).to eq ['self', 'first', 'last']
     end
 
-    xit 'contains Link information in the headers' do
+    it 'contains Link information in the headers' do
       get :index, format: :json
 
       expect(response.headers['Link']).to include "api/businesses?page=1>; rel='first'"
     end
   end
 
-  xdescribe 'GET #show for API' do
+  describe 'GET #show for API' do
     it 'returns JSON-formatted content' do
       business = create(:business)
       get :show, id: business.id
