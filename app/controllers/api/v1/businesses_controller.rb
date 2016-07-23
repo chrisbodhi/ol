@@ -92,11 +92,11 @@ module Api
 
       # Update the response header and metadata object in one pass
       def add_links
-        link_root = "<http://#{request.server_name}:#{request.port}/api/businesses?page="
-        response.headers['Link'] = "#{link_root}1>; rel='first', #{link_root}#{@businesses.total_pages}>; rel='last'"
+        link_root = "http://#{request.server_name}:#{request.port}/api/businesses?page="
+        response.headers['Link'] = "<#{link_root}1>; rel='first', <#{link_root}#{@businesses.total_pages}>; rel='last'"
 
         if @businesses.next_page
-          response.headers['Link'] << ", #{link_root}#{@businesses.next_page}>; rel='next'"
+          response.headers['Link'] << ", <#{link_root}#{@businesses.next_page}>; rel='next'"
           @links['next'] = "#{link_root}#{@businesses.next_page}"
         end
 
