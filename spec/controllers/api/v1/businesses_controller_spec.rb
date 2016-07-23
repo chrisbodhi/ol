@@ -84,7 +84,11 @@ describe Api::V1::BusinessesController do
       51.times{ create(:business) }
       get :index, format: :json
       json = JSON.parse(response.body)
-
+      
+      json['links'].values.each do |val|
+        expect(val).not_to include '<'
+        expect(val).not_to include '>'
+      end
       expect(json['current_page']).to eq 1
       expect(json['per_page']).to eq 50
       expect(json['total_entries']).to eq 51
@@ -101,6 +105,7 @@ describe Api::V1::BusinessesController do
       get :index, format: :json
 
       expect(response.headers['Link']).to include "api/businesses?page=1>; rel='first'"
+      expect(response.headers['Link']).to include '<http://'
     end
   end
 
